@@ -1,0 +1,4 @@
+Package: sing-box
+Architecture: amd64
+Maintainer: Asen Hu <sing@asen.page>
+Description: The universal proxy platform

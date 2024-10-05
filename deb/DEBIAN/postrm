@@ -1,0 +1,8 @@
+#!/bin/bash
+
+rm -rvf /usr/bin/sing-box /usr/lib/systemd/system/sing-box.service
+
+if [ "$1" == purge ]
+then
+    rm -rvf /etc/sing-box
+fi

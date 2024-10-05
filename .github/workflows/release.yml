@@ -1,0 +1,39 @@
+name: release
+
+permissions:
+  contents: write
+
+on:
+  schedule:
+    - cron: '18 6 * * 1'
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: install module
+        run: pip install -r requirements.txt
+      - name: build
+        run: python ./packer.py
+      - name: upload
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag=$(< ./tag_name.txt) || exit 0
+          gh release create "$tag" \
+            --repo="${{github.repository}}" \
+            --title="$tag" \
+            -n "see https://github.com/SagerNet/sing-box/releases/tag/$tag" || echo "It's already exists."
+          gh release upload "$tag" "./sing-box.deb" \
+            --clobber \
+            --repo="${{github.repository}}"
+          gh release upload "$tag" "./sing-boxv3.deb" \
+            --clobber \
+            --repo="${{github.repository}}"
